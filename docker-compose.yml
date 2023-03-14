@@ -48,6 +48,22 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
+  m2rmq:
+    networks:
+      - magento
+    image: rabbitmq:3-management
+    environment:
+      - RABBITMQ_DEFAULT_USER=magento
+      - RABBITMQ_DEFAULT_PASS=magento
+    ports:
+      - 15672:15672
+  m2mailhog:
+    image: mailhog/mailhog:v1.0.0
+    ports:
+      - "5025:1025"
+      - "6025:8025"
+    networks:
+      - magento
 networks:
   magento:
     driver: bridge
