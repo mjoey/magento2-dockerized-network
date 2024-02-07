@@ -8,11 +8,11 @@ For example:
 
     git clone -b 2.4.5-p1 git@github.com:magento/magento2.git src
 #### Set the permissions to execute the index.php file
-    chmod -R 777 src/
+    chmod -R 777 .
 
 
 #### Magento 2 installation (fresh install only)
-    docker exec -it m2phpfpm bin/magento setup:install --base-url=http://localhost --db-host=m2percona --db-name=magento --db-user=magento --db-password=magento --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --elasticsearch-host=m2elasticsearch
+    docker exec -it m2phpfpm bin/magento setup:install --base-url=http://localhost --db-host=m2percona --db-name=magento --db-user=magento --db-password=magento --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --elasticsearch-host=m2elasticsearch --search-engine=elasticsearch7
 
 ### How to:
 #### Access to Magento 2
