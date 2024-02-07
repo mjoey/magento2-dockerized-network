@@ -12,6 +12,9 @@ For example:
 
 
 #### Magento 2 installation (fresh install only)
+    docker compose up -d
+    composer install
+    composer require elasticsearch/elasticsearch:^7.0
     docker exec -it m2phpfpm bin/magento setup:install --base-url=http://localhost --db-host=m2percona --db-name=magento --db-user=magento --db-password=magento --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --elasticsearch-host=m2elasticsearch --search-engine=elasticsearch7
 
 ### How to:
