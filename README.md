@@ -12,10 +12,39 @@ For example:
 
 
 #### Magento 2 installation (fresh install only)
-    docker compose up -d
-    composer install
-    composer require elasticsearch/elasticsearch:^7.0
-    docker exec -it m2phpfpm bin/magento setup:install --base-url=http://localhost --db-host=m2percona --db-name=magento --db-user=magento --db-password=magento --admin-firstname=admin --admin-lastname=admin --admin-email=admin@admin.com --admin-user=admin --admin-password=admin123 --language=en_US --currency=USD --timezone=America/Chicago --use-rewrites=1 --elasticsearch-host=m2elasticsearch --search-engine=elasticsearch7
+
+1. **Start the Docker stack:**
+```bash
+docker compose up -d
+```
+
+2. **Install Composer dependencies inside the phpfpm container:**
+```bash
+docker compose exec m2phpfpm composer install
+```
+
+3. **Install Magento 2:**
+```bash
+docker compose exec m2phpfpm bin/magento setup:install \
+  --base-url=http://localhost:8000 \
+  --db-host=m2percona \
+  --db-name=magento \
+  --db-user=magento \
+  --db-password=magento \
+  --admin-firstname=admin \
+  --admin-lastname=admin \
+  --admin-email=admin@admin.com \
+  --admin-user=admin \
+  --admin-password=admin123 \
+  --language=en_US \
+  --currency=USD \
+  --timezone=America/Chicago \
+  --use-rewrites=1 \
+  --search-engine=opensearch \
+  --opensearch-host=m2opensearch
+```
+
+**Note:** Replace `http://localhost:8000` with your domain/port. OpenSearch is configured instead of Elasticsearch (recommended for Magento 2.4.8+).
 
 ### How to:
 #### Access to Magento 2
