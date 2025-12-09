@@ -1,5 +1,5 @@
-### Descritpion
-:v: Magento 2 STACK dockeriszed with Nginx self-signed ssl setting.
+### Description
+:v: Magento 2 STACK dockerized with Nginx self-signed SSL setting.
 
 ### Installation
 Clone this repository then clone Magento 2 source code in **./src** folder.
@@ -7,9 +7,6 @@ Clone this repository then clone Magento 2 source code in **./src** folder.
 For example:
 
     git clone -b 2.4.5-p1 git@github.com:magento/magento2.git src
-#### Set the permissions to execute the index.php file
-    chmod -R 777 .
-
 
 #### Magento 2 installation (fresh install only)
 
@@ -46,17 +43,20 @@ docker compose exec m2phpfpm bin/magento setup:install \
 
 **Note:** Replace `http://localhost:8000` with your domain/port. OpenSearch is configured instead of Elasticsearch (recommended for Magento 2.4.8+).
 
-#### 4. Set Magento directory permissions (inside container)
+#### 4. Permissions are automatically handled by Docker
 
-After installation, Magento needs write permissions on certain directories:
+Permissions are now optimized in `docker-compose.yml`:
+- Containers run with user ID `1000:1000` (your host user)
+- Volumes use the `:Z` flag for M2/SELinux compatibility
+- Default UMASK is `0022` for proper file permissions
 
+**No manual chmod needed!** Magento automatically gets the correct write permissions on `/var/www/html/var`, `/var/www/html/pub`, and `/var/www/html/generated`.
+
+If you encounter permission issues, verify Docker is running and restart the stack:
 ```bash
-docker compose exec m2phpfpm chmod -R 777 /var/www/html/var
-docker compose exec m2phpfpm chmod -R 777 /var/www/html/pub
-docker compose exec m2phpfpm chmod -R 777 /var/www/html/generated
+docker compose down
+docker compose up -d
 ```
-
-**Why?** Magento needs to write cache files, generated code, and static assets to these directories. If you get cache errors, check these permissions first.
 
 ---
 

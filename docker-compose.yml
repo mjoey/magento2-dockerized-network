@@ -5,8 +5,11 @@ services:
       dockerfile: Dockerfile
     networks:
       - magento
+    user: "1000:1000"  # Use host user (michael)
     volumes:
-      - ./src:/var/www/html
+      - ./src:/var/www/html:Z  # Z for SELinux on M2
+    environment:
+      - UMASK=0022  # Default permissions: 755 for dirs, 644 for files
   m2nginx:
     build:
       context: ./nginx
@@ -16,7 +19,7 @@ services:
     volumes:
       - ./src:/var/www/html
       - ./nginx/logs:/var/log/nginx/
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
       - 8000:80
       - 8443:443
