@@ -24,7 +24,7 @@ docker compose exec m2phpfpm composer install
 ```bash
 docker compose exec m2phpfpm bin/magento setup:install \
   --base-url=http://localhost:8000 \
-  --db-host=m2percona \
+  --db-host=m2mysql \
   --db-name=magento \
   --db-user=magento \
   --db-password=magento \

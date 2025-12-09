@@ -28,3 +28,19 @@ RUN cd /usr/local/etc/php/conf.d/ && \
   echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# Create entrypoint script to fix permissions
+RUN echo '#!/bin/bash\n\
+if [ -d /var/www/html ]; then\n\
+  find /var/www/html -type f -exec chmod 644 {} +\n\
+  find /var/www/html -type d -exec chmod 755 {} +\n\
+  chmod 775 /var/www/html/var\n\
+  chmod 775 /var/www/html/pub\n\
+  chmod 775 /var/www/html/generated\n\
+  chmod 775 /var/www/html/app/etc 2>/dev/null || true\n\
+fi\n\
+exec docker-php-entrypoint "$@"' > /usr/local/bin/entrypoint.sh && \
+chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD ["php-fpm"]
