@@ -16,6 +16,9 @@ services:
       dockerfile: Dockerfile
     networks:
       - magento
+    depends_on:
+      m2phpfpm:
+        condition: service_started
     volumes:
       - ./src:/var/www/html
       - ./nginx/logs:/var/log/nginx/
