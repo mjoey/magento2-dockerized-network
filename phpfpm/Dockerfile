@@ -40,10 +40,8 @@ if [ -d /var/www/html ]; then\n\
   chmod 775 /var/www/html/app/etc 2>/dev/null || true\n\
   find /var/www/html/bin -type f -exec chmod +x {} + 2>/dev/null || true\n\
   find /var/www/html/vendor/bin -type f -exec chmod +x {} + 2>/dev/null || true\n\
-  sed -i "s/^root \$MAGE_ROOT\/pub;/#root \$MAGE_ROOT\/pub;/" /var/www/html/nginx.conf.sample 2>/dev/null || true\n\
 fi\n\
 exec docker-php-entrypoint "$@"' > /usr/local/bin/entrypoint.sh && \
 chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["php-fpm"]
