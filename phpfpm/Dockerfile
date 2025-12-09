@@ -29,7 +29,7 @@ RUN cd /usr/local/etc/php/conf.d/ && \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-# Create entrypoint script to fix permissions and setup nginx config
+# Create entrypoint script to fix permissions
 RUN echo '#!/bin/bash\n\
 if [ -d /var/www/html ]; then\n\
   find /var/www/html -type f -exec chmod 644 {} +\n\
@@ -40,10 +40,7 @@ if [ -d /var/www/html ]; then\n\
   chmod 775 /var/www/html/app/etc 2>/dev/null || true\n\
   find /var/www/html/bin -type f -exec chmod +x {} + 2>/dev/null || true\n\
   find /var/www/html/vendor/bin -type f -exec chmod +x {} + 2>/dev/null || true\n\
-  if [ -f /var/www/html/nginx.conf.sample ] && [ ! -f /var/www/html/nginx.conf ]; then\n\
-    cp /var/www/html/nginx.conf.sample /var/www/html/nginx.conf\n\
-    sed -i "s/^root \$MAGE_ROOT\/pub;/#root \$MAGE_ROOT\/pub;/" /var/www/html/nginx.conf\n\
-  fi\n\
+  sed -i "s/^root \$MAGE_ROOT\/pub;/#root \$MAGE_ROOT\/pub;/" /var/www/html/nginx.conf.sample 2>/dev/null || true\n\
 fi\n\
 exec docker-php-entrypoint "$@"' > /usr/local/bin/entrypoint.sh && \
 chmod +x /usr/local/bin/entrypoint.sh
