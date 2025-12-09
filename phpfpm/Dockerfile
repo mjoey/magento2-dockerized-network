@@ -29,6 +29,9 @@ RUN cd /usr/local/etc/php/conf.d/ && \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# Set Composer home directory
+ENV COMPOSER_HOME=/tmp/composer
+
 # Create entrypoint script to fix permissions
 RUN echo '#!/bin/bash\n\
 if [ -d /var/www/html ]; then\n\
