@@ -2,3 +2,4 @@ mysql/*
 nginx/logs/*
 src/*
 src
+.claude

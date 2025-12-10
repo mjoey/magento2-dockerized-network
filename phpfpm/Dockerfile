@@ -27,6 +27,9 @@ RUN docker-php-ext-configure gd --with-jpeg --with-freetype\
 RUN cd /usr/local/etc/php/conf.d/ && \
   echo 'memory_limit = -1' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
+# Increase PHP-FPM process limit
+RUN echo '[www]\npm.max_children = 20\npm.start_servers = 10\npm.min_spare_servers = 5\npm.max_spare_servers = 15' >> /usr/local/etc/php-fpm.d/www.conf
+
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # Set Composer home directory
