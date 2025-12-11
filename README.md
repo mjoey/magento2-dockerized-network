@@ -91,8 +91,8 @@ sudo chmod 644 /opt/homebrew/etc/nginx/ssl/magento.local.crt
 ```
 
 #### 2. Create Nginx reverse proxy configuration
-Create `/etc/nginx/sites-available/magento.local`:
 ### Linux
+Create `/etc/nginx/sites-available/magento.local`:
 ```nginx
 upstream magento_backend {
     server localhost:8000;
@@ -154,6 +154,7 @@ server {
 }
 ```
 ### Mac OS
+Create `/opt/homebrew/etc/nginx/sites-available/magento.local`:
 ```nginx
 upstream magento_backend {
     server localhost:8000;
