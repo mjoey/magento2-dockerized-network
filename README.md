@@ -65,6 +65,7 @@ docker compose up -d
 If you're running Docker on a Linux machine and want to access Magento via a domain name instead of `localhost:8000`, configure your host's Nginx as a reverse proxy.
 
 #### 1. Generate self-signed SSL certificate
+### Linux
 ```bash
 sudo mkdir -p /etc/nginx/ssl
 
@@ -76,10 +77,22 @@ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
 sudo chmod 600 /etc/nginx/ssl/magento.local.key
 sudo chmod 644 /etc/nginx/ssl/magento.local.crt
 ```
+### Mac OS
+```bash
+sudo mkdir -p /opt/homebrew/etc/nginx/ssl
+
+sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout /opt/homebrew/etc/nginx/ssl/magento.local.key \
+  -out /opt/homebrew/etc/nginx/ssl/magento.local.crt \
+  -subj "/C=FR/ST=State/L=City/O=Organization/CN=magento.local"
+
+sudo chmod 600 /opt/homebrew/etc/nginx/ssl/magento.local.key
+sudo chmod 644 /opt/homebrew/etc/nginx/ssl/magento.local.crt
+```
 
 #### 2. Create Nginx reverse proxy configuration
 Create `/etc/nginx/sites-available/magento.local`:
-
+### Linux
 ```nginx
 upstream magento_backend {
     server localhost:8000;
@@ -140,8 +153,70 @@ server {
     }
 }
 ```
+### Mac OS
+```nginx
+upstream magento_backend {
+    server localhost:8000;
+    keepalive 256;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name magento.local www.magento.local;
+    return 301 https://$server_name$request_uri;
+}
+
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+    server_name magento.local www.magento.local;
+
+    ssl_certificate /opt/homebrew/etc/nginx/ssl/magento.local.crt;
+    ssl_certificate_key /opt/homebrew/etc/nginx/ssl/magento.local.key;
+
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    access_log /opt/homebrew/var/log/nginx/magento.local_access.log;
+    error_log /opt/homebrew/var/log/nginx/magento.local_error.log;
+
+    location / {
+        proxy_pass http://magento_backend;
+        proxy_http_version 1.1;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $server_name;
+        proxy_set_header Connection "";
+
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+
+        proxy_buffering on;
+        proxy_buffer_size 4k;
+        proxy_buffers 8 4k;
+        proxy_busy_buffers_size 8k;
+    }
+
+    location ~ /\.env {
+        deny all;
+    }
+
+    location ~ /\.ht {
+        deny all;
+    }
+}
+```
 
 #### 3. Enable the configuration
+### Linux
 ```bash
 sudo ln -s /etc/nginx/sites-available/magento.local /etc/nginx/sites-enabled/
 
