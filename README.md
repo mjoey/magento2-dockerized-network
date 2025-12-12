@@ -154,7 +154,7 @@ server {
 }
 ```
 ### Mac OS
-Create `/opt/homebrew/etc/nginx/sites-available/magento.local`:
+Create `/opt/homebrew/etc/nginx/magento.local`:
 ```nginx
 upstream magento_backend {
     server localhost:8000;
